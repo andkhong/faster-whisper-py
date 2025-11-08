@@ -4,7 +4,7 @@ import wave
 import os
 import torch
 
-def record_chunk(p, stream, file_path, chunk_length=1):
+def record_audio_chunk(p, stream, file_path, chunk_length=1):
     frames = []
     for _ in range(0, int(16000 / 1024 * chunk_length)):
         data = stream.read(1024, exception_on_overflow=False)
@@ -17,7 +17,7 @@ def record_chunk(p, stream, file_path, chunk_length=1):
     wf.writeframes(b''.join(frames))
     wf.close()
 
-def transcribe_chunk(model, file_path):
+def transcribe_chunk_to_text(model, file_path):
     segments, _ = model.transcribe(file_path)
     transcription = ""
     for segment in segments:
@@ -44,8 +44,8 @@ def main():
     try: 
         while True:
             chunk_file = "temp_chunk.wav"
-            record_chunk(p, stream, chunk_file)
-            transcription = transcribe_chunk(model, chunk_file)
+            record_audio_chunk(p, stream, chunk_file)
+            transcription = transcribe_chunk_to_text(model, chunk_file)
             if transcription:
                 print("Transcription:", transcription)
                 accumulated_transcription += transcription + " "
