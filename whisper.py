@@ -2,6 +2,7 @@ from faster_whisper import WhisperModel
 import pyaudio
 import wave
 import os
+import torch
 
 def record_chunk(p, stream, file_path, chunk_length=1):
     frames = []
@@ -25,7 +26,8 @@ def transcribe_chunk(model, file_path):
 
 def main():
     model_size = "small"
-    model = WhisperModel(model_size, device="cpu", compute_type="int8")
+    device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    model = WhisperModel(model_size, device=device, compute_type="int8")
 
     p = pyaudio.PyAudio()
     stream = p.open(
